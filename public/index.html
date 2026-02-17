@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="/css/index.css">
+  <script src="/js/lib.js"></script>
+  <title>Battleship</title>
+</head>
+
+<body>
+  <div class="flex gap-50">
+    <div class="fields">
+      <h1>Battleship</h1>
+
+      <div class="board-wrapper">
+        <div class="board" id="board-1">
+          <h2>Your sea</h2>
+          <pre id="userSea">Loading...</pre>
+        </div>
+
+        <!-- тут -->
+        <!-- <div class="sea">
+      <div class="spot"></div>
+      <div class="spot"></div>
+      <div class="spot"><img src="/pictures/bubbles.png" class="bubble" alt="" /></div>
+      <div class="spot"></div>
+      <div class="spot"><img src="/pictures/sinking_ship.png" class="sinking_ship" alt="" /></div>
+      <div class="spot">
+        <div class="deck"></div>
+      </div>
+      <div class="spot"></div>
+      <div class="spot"></div>
+      <div class="spot"></div>
+    </div> -->
+
+        <div class="board" id="board-4">
+          <h2>Bot's sea</h2>
+          <pre id="botVisible">Loading...</pre>
+        </div>
+      </div>
+
+      <div class="board-wrapper" id="extra-board-wrapper">
+        <div class="board" id="board-2">
+          <h2>What bot sees</h2>
+          <pre id="userVisible">Loading...</pre>
+        </div>
+
+        <div class="board" id="board-3">
+          <h2>Bot's actual sea</h2>
+          <pre id="botSea">Loading...</pre>
+        </div>
+      </div>
+
+    </div>
+    <div class="controls">
+
+      <h2 id="userName">Playing as _</h2>
+      <button id="logout">Logout</button>
+
+      <form id="moveForm">
+        <label for="coord">Enter coordinate (e.g. b5): </label>
+        <input id="coord" name="coord" type="text" required>
+        <button type="submit">Fire!</button>
+      </form>
+
+      <p id="status">Waiting for your move...</p>
+
+      <button id="resetBtn">Restart Game</button>
+      <button id="toggleBtn">Hide Cheating</button>
+
+    </div>
+  </div>
+  <script>
+
+    const toggleBtn = document.querySelector("#toggleBtn")
+    let isHidden = localStorage.getItem("battle_is_hidden") === "yes"
+    applyHidden()
+    let userName = localStorage.getItem("battle_user_name")
+    if (!userName) {
+      userName = prompt("Hello player, what is your name?")
+      localStorage.setItem("battle_user_name", userName)
+    }
+    document.getElementById("userName").textContent = `Playing as ${userName}`
+    fetchState();
+
+    document.getElementById("logout").addEventListener("click", () => {
+      localStorage.removeItem("battle_user_name")
+      location.reload()
+    })
+    // const sea1 = [
+    //   ["#", ".", "."],
+    //   [".", ".", "#"],
+    //   [".", ".", "."],
+    // ]
+    // renderSea(sea1, wrapperEl1)
+
+    // const wrapperEl2 = document.querySelector("#board-2")
+    // const sea2 = [
+    //   [".", "X", "~", ".", "#", "~", ".", "#", "~", "."],
+    //   [".", "#", "~", ".", "#", "~", "X", "#", "~", "."],
+    //   [".", "#", "~", ".", "#", "~", ".", "#", "~", "X"],
+    //   [".", "#", "X", ".", "#", "~", ".", "#", "~", "."],
+    //   [".", "#", "~", ".", "X", "~", ".", "#", "~", "."],
+    //   [".", "#", "~", ".", "#", "~", ".", "#", "~", "."],
+    //   [".", "X", "~", ".", "#", "~", ".", "X", "~", "."],
+    //   [".", "#", "~", ".", "#", "X", ".", "#", "~", "."],
+    //   [".", "#", "~", ".", "#", "~", ".", "#", "~", "."],
+    //   [".", "#", "X", ".", "#", "~", ".", "#", "~", "."],
+    // ]
+    // renderSea(sea2, wrapperEl2)
+
+    document.getElementById("resetBtn").addEventListener("click", async () => {
+      if (confirm("Do you know you're resetting the game?")) {
+        const response = await fetch("/reset", {
+          method: "POST",
+          headers: { "Content-type": "application/json" }
+        });
+
+        await fetchState();
+      }
+
+    });
+
+
+    toggleBtn.addEventListener("click", () => {
+      // const isHidden = toggleBtn.textContent !== "Hide Cheating"
+      isHidden = !isHidden
+      localStorage.setItem("battle_is_hidden", isHidden ? "yes" : "no")
+      applyHidden()
+
+    })
+
+    document.getElementById("moveForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      handleSubmitCoords()
+    });
+
+  
+
+  </script>
+</body>
+
+</html>
