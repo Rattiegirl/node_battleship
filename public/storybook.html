@@ -1,409 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>Battleship UI Storybook</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <script src="/js/lib.js"></script>
 
-  <!-- Подключаем ваши стили, чтобы компоненты выглядели как в приложении -->
-  <link rel="stylesheet" href="/css/index.css" />
-
-  <style>
-    /* Небольшая «обвязка» для самой сторибук-страницы */
-    body { font-family: monospace; margin: 20px; }
-    .sb-container { display: grid; grid-template-columns: 280px 1fr; gap: 24px; }
-    .sb-panel { background: #f7f7f7; border: 1px solid #ddd; padding: 16px; border-radius: 8px; }
-    .sb-title { margin: 0 0 10px; font-size: 18px; }
-    .sb-controls label { display: block; margin: 8px 0 4px; }
-    .sb-grid { display: grid; gap: 16px; }
-    .sb-story { background: #fff; border: 1px solid #eee; padding: 16px; border-radius: 8px; }
-    .sb-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .sb-kbd { display:inline-block; padding:2px 6px; border:1px solid #aaa; border-radius:4px; background:#fafafa; }
-    .hint { color:#666; font-size:12px; }
-    .divider { height:1px; background:#e5e5e5; margin:12px 0; }
-    .sea { width: 250px; height: 250px; } /* соответствие вашим размерам */
-    .story-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storybook</title>
 </head>
+
 <body>
-
-  <h1>Battleship UI — Storybook</h1>
-  <p class="hint">Страница для локальной отладки внешнего вида компонентов. Бэкенд не используется.</p>
-
-  <div class="sb-container">
-    <!-- Панель управления (knobs) -->
-    <aside class="sb-panel">
-      <h2 class="sb-title">Controls</h2>
-      <div class="sb-controls">
-        <label>Rows (5–15)
-          <input id="rows" type="number" min="5" max="15" value="10" />
-        </label>
-        <label>Cols (5–15)
-          <input id="cols" type="number" min="5" max="15" value="10" />
-        </label>
-
-        <div class="divider"></div>
-
-        <label>Ships ratio (0–1)
-          <input id="ratioShips" type="number" step="0.05" min="0" max="1" value="0.18" />
-        </label>
-        <label>Hits ratio (0–1)
-          <input id="ratioHits" type="number" step="0.05" min="0" max="1" value="0.06" />
-        </label>
-        <label>Misses ratio (0–1)
-          <input id="ratioMisses" type="number" step="0.05" min="0" max="1" value="0.12" />
-        </label>
-
-        <div class="divider"></div>
-
-        <label>
-          Show debug letters/numbers
-          <input id="showGuides" type="checkbox" />
-        </label>
-
-        <div class="divider"></div>
-
-        <button id="regen">Regenerate Seas</button>
-      </div>
-
-      <div class="divider"></div>
-
-      <h3 class="sb-title">Legend</h3>
-      <div class="sb-row">
-        <span class="sb-kbd">.</span> empty
-        <span class="sb-kbd">#</span> deck (ship)
-        <span class="sb-kbd">X</span> hit ship
-        <span class="sb-kbd">~</span> miss
-        <span class="sb-kbd">-</span> fog / border helper
-      </div>
-    </aside>
-
-    <!-- Демонстрационные блоки -->
-    <main class="sb-grid">
-      <!-- История: Поле (sea) -->
-      <section class="sb-story">
-        <div class="story-header">
-          <h3 class="sb-title">Story: Sea (Board)</h3>
-          <button id="shuffleOne">Shuffle</button>
+    <div class="flex gap-50">
+        <div class="st-sidebar">
+            <ul>
+                <li><a href="example.html">Sea</a></li>
+                <li><a href="example.html">Form</a></li>
+            </ul>
         </div>
-        <p class="hint">Превью одной доски: комбинация ячеек с кораблями, попаданиями и промахами.</p>
-        <div id="demo-board" class="board">
-          <h2>Demo Sea</h2>
-          <div id="demo-sea" class="sea"></div>
+        <div>
+            <section>
+                <h2>Sea cells for experimentation</h2>
+                <div class="cell-wrapper">
+
+                </div>
+                <button id="confetti-btn">Confetti Button</button>
+            </section>
+            <section>
+                <button id="blryap-btn">Click for free blryap</button>
+                <button id="water-blorp-btn">Click for free water blorp</button>
+                <button id="cannon-fire-btn">Click for free cannon fire</button>
+            </section>
+            <section>
+                <h2>Seas</h2>
+                <div class="board" id="board-1">
+                    <h2>Your sea</h2>
+                    <pre id="userSea">Loading...</pre>
+                </div>
+            </section>
+            <section>
+                <h2>Forms</h2>
+            </section>
         </div>
-      </section>
+    </div>
+    <script>
 
-      <!-- История: Состояния ячеек -->
-      <section class="sb-story">
-        <h3 class="sb-title">Story: Spot States</h3>
-        <p class="hint">Отдельные клетки в различных состояниях из вашего CSS/разметки.</p>
-        <div class="sea" style="width:auto;height:auto;display:flex;gap:8px;padding:8px;background:#e9f4ff;border-radius:8px;">
-          <div class="spot"></div>
-          <div class="spot"><div class="deck"></div></div>
-          <div class="spot"><img src="/pictures/sinking_ship.png" class="sinking_ship" alt="" /></div>
-          <div class="spot"><img src="/pictures/bubbles.png" class="bubble" alt="" /></div>
-          <div class="spot">-</div>
-        </div>
-      </section>
 
-      <!-- История: Контролы (форма, кнопки, статус) -->
-      <section class="sb-story">
-        <h3 class="sb-title">Story: Controls & Status</h3>
-        <p class="hint">Мок формы, кнопок и статуса без логики бэкенда.</p>
+        const cellWrapperEl = document.querySelector(".cell-wrapper")
+        cellWrapperEl.innerHTML += (drawCell("empty_sea"))
+        cellWrapperEl.innerHTML += (drawCell("alive_ship"))
+        cellWrapperEl.innerHTML += (drawCell("alive_ship", "up"))
+        cellWrapperEl.innerHTML += (drawCell("alive_ship", "left"))
+        cellWrapperEl.innerHTML += (drawCell("alive_ship", "down"))
+        cellWrapperEl.innerHTML += (drawCell("alive_ship_nose"))
+        cellWrapperEl.innerHTML += (drawCell("damaged_ship_nose", "up"))
+        cellWrapperEl.innerHTML += (drawCell("sunken_ship_nose", "left"))
+        cellWrapperEl.innerHTML += (drawCell("alive_ship_nose", "down"))
+        cellWrapperEl.innerHTML += (drawCell("damaged_ship"))
+        cellWrapperEl.innerHTML += (drawCell("sunken_ship"))
+        cellWrapperEl.innerHTML += (drawCell("missed"))
+        cellWrapperEl.innerHTML += (drawCell("no_ship"))
 
-        <div class="controls" style="background:#fafafa;padding:12px;border:1px solid #ddd;border-radius:8px;">
-          <h2 id="userName">Playing as John Doe</h2>
-          <button id="logout" type="button">Logout</button>
 
-          <form id="moveForm" onsubmit="event.preventDefault(); alert('Fire → ' + document.getElementById('coord').value);">
-            <label for="coord">Enter coordinate (e.g. b5): </label>
-            <input id="coord" name="coord" type="text" required />
-            <button type="submit">Fire!</button>
-          </form>
 
-          <p id="status">Waiting for your move...</p>
+        // const sea = [
+        //     [".", "X", "~", ".", "#", "~", ".", "#", "~", "."],
+        //     [".", "#", "~", ".", "#", "~", "X", "#", "-", "."],
+        //     [".", "#", "~", ".", "#", "~", ".", "#", "~", "X"],
+        //     [".", "#", "X", ".", "#", "~", ".", "#", "~", "."],
+        //     [".", "#", "~", "-", "X", "~", ".", "#", "~", "."],
+        //     [".", "#", "~", ".", "#", "~", ".", "#", "~", "."],
+        //     [".", "X", "~", ".", "#", "~", ".", "X", "~", "."],
+        //     [".", "#", "~", ".", "#", "X", ".", "#", "~", "."],
+        //     ["-", "#", "~", ".", "#", "~", ".", "#", "~", "."],
+        //     [".", "#", "X", ".", "#", "~", ".", "#", "~", "."],
+        // ]
+        const sea = [
+            [".", ".", "?", "?", "?", ".", ".", ".", ".", "."],
+            [".", ".", "?", "?", "?", ".", ".", "~", ".", "."],
+            [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+            [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+            [".", ".", ".", "#", "@", "#", ".", ".", ".", "."],
+            [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+            [".", ".", ".", ".", ".", ".", "-", "-", "-", "."],
+            [".", ".", ".", ".", ".", ".", "-", "X", "-", "."],
+            [".", ".", "~", ".", ".", ".", "-", "-", "-", "."],
+            [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
 
-          <button id="resetBtn" type="button" onclick="alert('Restart mock!')">Restart Game</button>
-          <button id="toggleBtn" type="button" onclick="document.getElementById('cheat-wrapper').classList.toggle('hidden')">Hide/Show Cheating</button>
-        </div>
-      </section>
+        ]
+        // first our field's properties will be listed, and only after that what we know of the enemies
+        // . = spot of sea 
+        // fix bot's spot of unknown nature
+        // # = unscathed ship 
+        // fix damaged ship, it also can be sunken on bot's field that we see
+        // X = sunken ship
+        // todo: add sunken ship decks to bot field
+        // ~ = misses (V)
+        // - = where there cannot be a ship/where there cannot be a ship (V)
+        // @ - damaged ship
+        // ? - spot of unknown nature
 
-      <!-- История: Все четыре доски как в приложении -->
-      <section class="sb-story">
-        <h3 class="sb-title">Story: 4 Boards Layout</h3>
-        <p class="hint">Разметка, как на основной странице: «Ваше море», «Что видит бот», «Море бота (реальное)», «Море бота (видимое)».</p>
+        document.getElementById("userSea").textContent = format(sea);
+        const wrapperEl1 = document.querySelector("#board-1")
+        // renderPrettySea(transformOppositeSea(sea), wrapperEl1)
+        renderPrettySea(transformVisibleSea(sea), wrapperEl1)
+        console.log(sea)
 
-        <div class="board-wrapper">
-          <div class="board" id="sb-board-1">
-            <h2>Your sea</h2>
-            <pre id="sb-userSea">Mock...</pre>
-          </div>
+        const confettiBtn = document.querySelector("#confetti-btn")
+        confettiBtn.addEventListener("click", () => {
+            throwConfetti(250)
+        })
 
-          <div class="board" id="sb-board-4">
-            <h2>Bot's sea (visible)</h2>
-            <pre id="sb-botVisible">Mock...</pre>
-          </div>
-        </div>
+        const blryapButton = document.getElementById("blryap-btn")
+        blryapButton.addEventListener("click", ()=>{
+            sounds.blryap.currentTime = 0
+            sounds.blryap.play()
+            throwConfetti()
+        })
 
-        <div class="board-wrapper" id="cheat-wrapper">
-          <div class="board" id="sb-board-2">
-            <h2>What bot sees</h2>
-            <pre id="sb-userVisible">Mock...</pre>
-          </div>
-
-          <div class="board" id="sb-board-3">
-            <h2>Bot's actual sea</h2>
-            <pre id="sb-botSea">Mock...</pre>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <script>
-    // ========= Утилиты =========
-    const alphabet = "abcdefghij";
-
-    function makeEmptySea(rows, cols, filler = ".") {
-      return Array.from({ length: rows }, () => Array.from({ length: cols }, () => filler));
-    }
-
-    // Генератор тестового моря (без сложной валидации «правильной» расстановки)
-    // просто для превью разных символов.
-    function makeRandomSea(rows, cols, ratios) {
-      const total = rows * cols;
-      const countShips  = Math.floor(total * (ratios.ships  ?? 0.18));
-      const countHits   = Math.floor(total * (ratios.hits   ?? 0.06));
-      const countMisses = Math.floor(total * (ratios.misses ?? 0.12));
-
-      const flat = Array.from({ length: total }, () => ".");
-      fillRandom(flat, "#", countShips);
-      fillRandom(flat, "X", countHits);
-      fillRandom(flat, "~", countMisses);
-      // остальное — "."
-
-      // Случайно добавим немного "-" для демонстрации (необязательно)
-      const countFog = Math.floor(total * 0.03);
-      fillRandom(flat, "-", countFog);
-
-      // Разворачиваем в матрицу
-      const sea = [];
-      for (let r = 0; r < rows; r++) {
-        sea.push(flat.slice(r * cols, (r + 1) * cols));
-      }
-      return sea;
-    }
-
-    function fillRandom(flatArr, symbol, count) {
-      const idxs = [...flatArr.keys()];
-      shuffle(idxs);
-      let filled = 0;
-      for (const i of idxs) {
-        if (flatArr[i] === ".") {
-          flatArr[i] = symbol;
-          filled++;
-          if (filled >= count) break;
-        }
-      }
-    }
-
-    function shuffle(a) {
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-      }
-      return a;
-    }
-
-    function formatSea(sea) {
-      return sea.map(row => row.join(" ")).join("\n");
-    }
-
-    // ========= Рендер из вашего приложения (адаптирован) =========
-    function renderSea(sea, wrapperEl) {
-      const prevSea = wrapperEl.querySelector('.sea');
-      if (prevSea) prevSea.remove();
-
-      const seaEl = document.createElement("div");
-      seaEl.classList.add("sea");
-
-      let str = "";
-      for (let row = 0; row < sea.length; row++) {
-        for (let col = 0; col < sea[row].length; col++) {
-          const cell = sea[row][col];
-          str += `<div class="spot" data-row="${row}" data-col="${col}">`;
-          if (cell === "#") {
-            str += '<div class="deck"></div>';
-          } else if (cell === "~") {
-            str += '<img src="/pictures/bubbles.png" class="bubble" alt="" />';
-          } else if (cell === "X") {
-            str += '<img src="/pictures/sinking_ship.png" class="sinking_ship" alt="" />';
-          } else if (cell === "-") {
-            str += '-';
-          }
-          str += '</div>';
-        }
-      }
-      seaEl.innerHTML = str;
-      wrapperEl.append(seaEl);
-
-      // Клик по клетке — автозаполнение координаты в мок-форме
-      seaEl.querySelectorAll('.spot').forEach((spot) => {
-        spot.addEventListener('click', () => {
-          const r = Number(spot.getAttribute('data-row'));
-          const c = Number(spot.getAttribute('data-col'));
-          const coord = alphabet[c] + (r + 1);
-          const input = document.getElementById('coord');
-          if (input) input.value = coord;
-        });
-      });
-    }
-
-    // ========= Состояние для сторибука =========
-    let SB = {
-      rows: 10,
-      cols: 10,
-      ratios: { ships: 0.18, hits: 0.06, misses: 0.12 },
-      showGuides: false,
-
-      demo: makeEmptySea(10, 10),
-      userSea: makeEmptySea(10, 10),
-      userVisible: makeEmptySea(10, 10),
-      botSea: makeEmptySea(10, 10),
-      botVisible: makeEmptySea(10, 10),
-    };
-
-    function regenAll() {
-      const { rows, cols, ratios } = SB;
-      SB.demo       = makeRandomSea(rows, cols, ratios);
-      SB.userSea    = makeRandomSea(rows, cols, ratios);
-      SB.userVisible= makeRandomSea(rows, cols, ratios);
-      SB.botSea     = makeRandomSea(rows, cols, ratios);
-      SB.botVisible = makeRandomSea(rows, cols, ratios);
-      paintAll();
-    }
-
-    function paintAll() {
-      // Demo board
-      const demoSeaWrap = document.getElementById('demo-sea');
-      renderSea(SB.demo, demoSeaWrap.parentElement);
-
-      // 4 boards (превью)
-      const el1 = document.getElementById('sb-board-1'); // userSea
-      const el2 = document.getElementById('sb-board-2'); // userVisible
-      const el3 = document.getElementById('sb-board-3'); // botSea
-      const el4 = document.getElementById('sb-board-4'); // botVisible
-
-      renderSea(SB.userSea, el1);
-      renderSea(SB.userVisible, el2);
-      renderSea(SB.botSea, el3);
-      renderSea(SB.botVisible, el4);
-
-      // Обновим текстовые <pre> как в приложении
-      document.getElementById('sb-userSea').textContent     = formatSea(SB.userSea);
-      document.getElementById('sb-userVisible').textContent = formatSea(SB.userVisible);
-      document.getElementById('sb-botSea').textContent      = formatSea(SB.botSea);
-      document.getElementById('sb-botVisible').textContent  = formatSea(SB.botVisible);
-
-      applyGuides();
-    }
-
-    function applyGuides() {
-      // Подсказки строк/столбцов (простая рамка из букв/цифр)
-      const seas = document.querySelectorAll('.sea');
-      seas.forEach(sea => {
-        sea.style.position = 'relative';
-        // Сначала уберём старые гайды
-        sea.querySelectorAll('.guide-x, .guide-y').forEach(n => n.remove());
-
-        if (!SB.showGuides) return;
-
-        const gX = document.createElement('div');
-        gX.className = 'guide-x';
-        gX.style.position = 'absolute';
-        gX.style.top = '-18px';
-        gX.style.left = '0';
-        gX.style.right = '0';
-        gX.style.display = 'flex';
-        gX.style.flexWrap = 'wrap';
-        gX.style.fontSize = '12px';
-        gX.style.gap = '0';
-        gX.style.pointerEvents = 'none';
-        gX.style.justifyContent = 'space-between';
-
-        const gY = document.createElement('div');
-        gY.className = 'guide-y';
-        gY.style.position = 'absolute';
-        gY.style.left = '-18px';
-        gY.style.top = '0';
-        gY.style.bottom = '0';
-        gY.style.display = 'flex';
-        gY.style.flexDirection = 'column';
-        gY.style.fontSize = '12px';
-        gY.style.gap = '0';
-        gY.style.pointerEvents = 'none';
-        gY.style.alignItems = 'center';
-        gY.style.justifyContent = 'space-between';
-
-        // По ширине/высоте .sea у вас 250x250 и клетки 25x25 → 10 столбцов/строк.
-        // Наша генерация может отличаться по count, но визуально ок.
-        for (let c = 0; c < SB.cols; c++) {
-          const span = document.createElement('span');
-          span.textContent = alphabet[c] ?? '';
-          gX.appendChild(span);
-        }
-        for (let r = 0; r < SB.rows; r++) {
-          const span = document.createElement('span');
-          span.textContent = String(r + 1);
-          gY.appendChild(span);
-        }
-
-        sea.appendChild(gX);
-        sea.appendChild(gY);
-      });
-    }
-
-    // ========= Привязка контролов =========
-    document.getElementById('rows').addEventListener('input', (e) => {
-      SB.rows = clamp(parseInt(e.target.value || '10', 10), 5, 15);
-      regenAll();
-    });
-    document.getElementById('cols').addEventListener('input', (e) => {
-      SB.cols = clamp(parseInt(e.target.value || '10', 10), 5, 15);
-      regenAll();
-    });
-    document.getElementById('ratioShips').addEventListener('input', (e) => {
-      SB.ratios.ships = clampFloat(parseFloat(e.target.value || '0.18'), 0, 1);
-      regenAll();
-    });
-    document.getElementById('ratioHits').addEventListener('input', (e) => {
-      SB.ratios.hits = clampFloat(parseFloat(e.target.value || '0.06'), 0, 1);
-      regenAll();
-    });
-    document.getElementById('ratioMisses').addEventListener('input', (e) => {
-      SB.ratios.misses = clampFloat(parseFloat(e.target.value || '0.12'), 0, 1);
-      regenAll();
-    });
-    document.getElementById('showGuides').addEventListener('change', (e) => {
-      SB.showGuides = !!e.target.checked;
-      applyGuides();
-    });
-
-    document.getElementById('regen').addEventListener('click', regenAll);
-    document.getElementById('shuffleOne').addEventListener('click', () => {
-      SB.demo = makeRandomSea(SB.rows, SB.cols, SB.ratios);
-      const demoSeaWrap = document.getElementById('demo-sea');
-      renderSea(SB.demo, demoSeaWrap.parentElement);
-      applyGuides();
-    });
-
-    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
-    function clampFloat(v, min, max) {
-      if (Number.isNaN(v)) return min;
-      return Math.max(min, Math.min(max, v));
-    }
-
-    // Первый рендер
-    regenAll();
-  </script>
+        const waterBlorpButton = document.getElementById("water-blorp-btn")
+        waterBlorpButton.addEventListener("click", ()=>{
+            sounds.waterBlorp.currentTime = 0
+            sounds.waterBlorp.play()
+            throwConfetti()
+        })
+        
+        const cannonFireButton = document.getElementById("cannon-fire-btn")
+        cannonFireButton.addEventListener("click", ()=>{
+            sounds.cannonFire.currentTime = 0
+            sounds.cannonFire.play()
+            throwConfetti()
+        })
+    </script>
 </body>
+
 </html>
