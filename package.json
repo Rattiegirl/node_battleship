@@ -5,8 +5,10 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn src/server.ts",
+    "dev:t": "ts-node-dev --respawn src/t-t-t/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "check": "ts-node src/t-t-t/test.ts"
   },
   "dependencies": {
     "express": "^4.18.2"

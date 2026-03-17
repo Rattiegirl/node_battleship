@@ -28,7 +28,7 @@ async function fetchState() {
 
     const status = document.getElementById("status");
     if (data.game_over) {
-        status.textContent = "Game Over! Winner: "  + data.winner.toUpperCase();
+        status.textContent = "Game Over! Winner: " + data.winner.toUpperCase();
         if (data.winner === "user") {
             throwConfetti(250)
             sounds.blryap.play()
@@ -142,6 +142,17 @@ const handleSubmitCoords = async () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ coordinate: coord })
     });
+
+    const data = await res.json()
+    if (data.result === "miss") {
+        sounds.waterBlorp.currentTime = 0
+        sounds.waterBlorp.volume = 0.5
+        sounds.waterBlorp.play()
+    }else if(data.result === "hit"){
+        sounds.cannonFire.currentTime = 0
+        sounds.cannonFire.volume = 0.5
+        sounds.cannonFire.play()
+    }
 
     document.getElementById("coord").value = "";
     await fetchState();
