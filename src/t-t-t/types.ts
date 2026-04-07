@@ -2,6 +2,7 @@ export type Cell = 'O' | 'X' | ' ';
 export type Field = Cell[]
 export type Winner = 'O' | 'X' | 'undetermined' | 'tie'
 export type Player = 'O' | 'X'
+export type History = {}
 
 // GET /api/field
 export type FieldStateResponse = {
@@ -13,15 +14,15 @@ export type FieldStateResponse = {
     // history
 }
 // POST /api/move
-type MoveBody = {
+export type MoveBody = {
     player: Player;
-    coodinates: [number, number];
+    coodinate: number
 }
-type MoveResponse = FieldStateResponse & {
+export type MoveResponse = FieldStateResponse & {
     success: boolean;
     error?: string;
 }
 // PUT /api/field
-type EmptyFieldStateResponse = FieldStateResponse & {
+export type EmptyFieldStateResponse = FieldStateResponse & {
     field: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
 }

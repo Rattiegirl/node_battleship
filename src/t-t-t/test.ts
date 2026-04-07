@@ -36,11 +36,11 @@ try {
     console.log(fieldToWinner(field2))
     console.log(fieldToWinner(field3))
     console.log(fieldToWinner(field4))
-    console.log(move('O', 1, 2, field5))
-    console.log(move('X', 2, 2, field5))
-    console.log(move('O', 1, 1, field5))
-    console.log(move('O', 1, 3, field5))
-    console.log(move('X', 1, 1, field5))
+    console.log(move('O', 3, field5))
+    console.log(move('X', 4, field5))
+    console.log(move('O', 0, field5))
+    console.log(move('O', 6, field5))
+    console.log(move('X', 0, field5))
     console.log(fieldToWinner(field5))
 
 

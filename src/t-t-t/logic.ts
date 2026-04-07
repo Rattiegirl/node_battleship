@@ -1,4 +1,4 @@
-import { Field, Player, Winner } from "./types"
+import { Field, Player, Winner, History } from "./types"
 
 const combinations = [
     [0, 1, 2],
@@ -29,12 +29,14 @@ export const fieldToWinner = (field: Field): Winner => {
     return 'tie'
 }
 
-export const move = (player: Player, coordinateX: number, coordinateY: number, field: Field): Field => {
-    const moveCoord = (3 * (coordinateX - 1) + (coordinateY - 1))
+export const move = (player: Player, moveCoord: number, field: Field): Field => {
+    // const moveCoord = (3 * (coordinateX - 1) + (coordinateY - 1))
     if (field[moveCoord] !== ' ') {
-        throw new Error(`There already is a "${field[moveCoord]}" move at coordinates: (${coordinateX}; ${coordinateY})`)
+        throw new Error(`There already is a "${field[moveCoord]}" move at coordinate: (${moveCoord})`)
     }
     field[moveCoord] = player
+    // history.push(`${player} at ${coordinateX}, ${coordinateY}`)
     return field
 }
 
+//bot
