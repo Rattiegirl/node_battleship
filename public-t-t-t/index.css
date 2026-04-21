@@ -42,3 +42,9 @@
     font-weight: bold;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
+#resetBtn {
+    background-color: white;
+    border: 3px solid aquamarine;
+    border-radius: 20%;
+}
